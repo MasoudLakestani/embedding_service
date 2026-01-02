@@ -14,8 +14,8 @@ COPY functions/ ./functions/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir sentence-transformers>=5.2.0,<6.0.0 && \
-    pip install --no-cache-dir fastapi>=0.115.0,<1.0.0 && \
+    pip install --no-cache-dir "sentence-transformers>=5.2.0,<6.0.0" && \
+    pip install --no-cache-dir "fastapi>=0.115.0,<1.0.0" && \
     pip install --no-cache-dir "uvicorn[standard]>=0.32.0,<1.0.0"
 
 # Expose port
