@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  embedding-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: embedding_service
+    ports:
+      - "8585:8585"
+    volumes:
+      - /opt/blackeveryday/volumes/embedding-service:/root/.cache/huggingface/hub
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8585/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - blackeveryday_network
+
+networks:
+  blackeveryday_network:
+    external: true

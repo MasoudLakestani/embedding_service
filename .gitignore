@@ -1,0 +1,12 @@
+.venv
+.vscode
+settings.toml
+__pycache__/
+migrations/versions/*
+my_test
+.env
+!migrations/versions/.gitkeep
+routers/scha.py
+*.log
+*.html
+*.md
