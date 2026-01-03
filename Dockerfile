@@ -20,7 +20,7 @@ COPY functions/ ./functions/
 COPY schemas/ ./schemas/
 
 # Install dependencies using poetry
-RUN poetry install --no-dev --no-interaction --no-ansi
+RUN poetry install --no-root
 
 # Expose port
 EXPOSE 8585
