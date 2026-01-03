@@ -11,7 +11,9 @@ RUN apt-get update && apt-get install -y \
     && ln -s /root/.local/bin/poetry /usr/local/bin/poetry
 
 # Configure poetry
-RUN poetry config virtualenvs.create false
+RUN poetry config virtualenvs.create false && \
+    poetry config installer.max-workers 10 && \
+    poetry config installer.no-binary :none:
 
 # Copy project files
 COPY pyproject.toml ./
@@ -19,8 +21,11 @@ COPY app.py ./
 COPY functions/ ./functions/
 COPY schemas/ ./schemas/
 
-# Install dependencies using poetry
-RUN poetry install --no-root
+# Install PyTorch CPU-only first (to avoid CUDA dependencies)
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install dependencies using poetry (with increased timeout)
+RUN poetry install --no-root --no-interaction --no-ansi
 
 # Expose port
 EXPOSE 8585
