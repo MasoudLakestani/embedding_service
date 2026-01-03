@@ -1,18 +1,16 @@
-[project]
+[tool.poetry]
 name = "embedding-service"
 version = "0.1.0"
-description = ""
-authors = [
-    {name = "masoud89",email = "m.lakestani89@gmail.com"}
-]
+description = "Text Embedding Service using heydariAI/persian-embeddings"
+authors = ["masoud89 <m.lakestani89@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "sentence-transformers>=5.2.0,<6.0.0",
-    "fastapi>=0.115.0,<1.0.0",
-    "uvicorn[standard]>=0.32.0,<1.0.0"
-]
 
+[tool.poetry.dependencies]
+python = "^3.12"
+sentence-transformers = "^5.2.0"
+fastapi = "^0.115.0"
+pydantic = "^2.0.0"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

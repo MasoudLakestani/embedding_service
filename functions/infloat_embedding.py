@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 
-model_name = 'heydariAI/persian-embeddings'
+model_name = 'intfloat/multilingual-e5-small'
 _model = None
 
 def get_model():
@@ -9,7 +9,7 @@ def get_model():
         _model = SentenceTransformer(model_name)
     return _model
 
-def heydari_embedding(text: str):
+def embed_intfloat(text: str):
     model = get_model()
-    embedding = model.encode(text)
+    embedding = model.encode(text, normalize_embeddings=True)
     return embedding
