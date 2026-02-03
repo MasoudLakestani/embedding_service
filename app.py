@@ -5,11 +5,11 @@ from schemas import EmbedRequest, EmbedBatchRequest, EmbedResponse, EmbedBatchRe
 from functions import (
     heydari_embedding,
     get_heydari_model,
-    _heydari_model,
     embed_intfloat,
-    get_intfloat_model,
-    _intfloat_model
+    get_intfloat_model
 )
+from functions import heydari_embedding as heydari_module
+from functions import infloat_embedding as intfloat_module
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -53,8 +53,8 @@ async def root():
 async def health_check():
     """Health check endpoint"""
     models_status = {
-        "heydari": _heydari_model is not None,
-        "intfloat-small": _intfloat_model is not None
+        "heydari": heydari_module._model is not None,
+        "intfloat-small": intfloat_module._model is not None
     }
 
     if not all(models_status.values()):
