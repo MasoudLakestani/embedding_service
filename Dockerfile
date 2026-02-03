@@ -2,26 +2,23 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies and poetry
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/* 
-
-
-RUN pip install poetry
-
-# Configure poetry
-RUN poetry config virtualenvs.create false
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy project files
-COPY ./poetry.lock ./pyproject.toml ./
+COPY pyproject.toml ./
 COPY app.py ./
 COPY functions/ ./functions/
 COPY schemas/ ./schemas/
 
-# Install dependencies using poetry
-RUN poetry install --no-root --no-interaction --no-ansi
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir "sentence-transformers>=5.2.0,<6.0.0" && \
+    pip install --no-cache-dir "fastapi>=0.115.0,<1.0.0" && \
+    pip install --no-cache-dir "pydantic>=2.0.0,<3.0.0" && \
+    pip install --no-cache-dir "uvicorn[standard]>=0.32.0,<1.0.0"
 
 # Expose port
 EXPOSE 8585
