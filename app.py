@@ -1,11 +1,14 @@
 from fastapi import FastAPI, HTTPException, Header
 from typing import Optional
 import logging
+import asyncio
 from schemas import EmbedRequest, EmbedBatchRequest, EmbedResponse, EmbedBatchResponse
 from functions import (
     heydari_embedding,
+    heydari_embedding_batch,
     get_heydari_model,
     embed_intfloat,
+    embed_intfloat_batch,
     get_intfloat_model
 )
 import functions.heydari_embedding as heydari_module
@@ -92,11 +95,11 @@ async def embed_text(request: EmbedRequest, model: Optional[str] = Header(None))
                 detail=f"Invalid model '{model}'. Must be one of: {list(SUPPORTED_MODELS.keys())}"
             )
 
-        # Route to appropriate embedding function
+        # Route to appropriate embedding function - run in thread pool for true async
         if model == "heydari":
-            embedding = heydari_embedding(request.text)
+            embedding = await asyncio.to_thread(heydari_embedding, request.text)
         elif model == "intfloat-small":
-            embedding = embed_intfloat(request.text)
+            embedding = await asyncio.to_thread(embed_intfloat, request.text)
 
         return EmbedResponse(embedding=embedding.tolist())
 
@@ -132,16 +135,13 @@ async def embed_batch(request: EmbedBatchRequest, model: Optional[str] = Header(
                 detail=f"Invalid model '{model}'. Must be one of: {list(SUPPORTED_MODELS.keys())}"
             )
 
-        # Route to appropriate embedding function
-        embeddings = []
-        for text in request.texts:
-            if model == "heydari":
-                embedding = heydari_embedding(text)
-            elif model == "intfloat-small":
-                embedding = embed_intfloat(text)
-            embeddings.append(embedding.tolist())
+        # Route to appropriate embedding function - using batch processing in thread pool
+        if model == "heydari":
+            embeddings = await asyncio.to_thread(heydari_embedding_batch, request.texts)
+        elif model == "intfloat-small":
+            embeddings = await asyncio.to_thread(embed_intfloat_batch, request.texts)
 
-        return EmbedBatchResponse(embeddings=embeddings)
+        return EmbedBatchResponse(embeddings=embeddings.tolist())
 
     except HTTPException:
         raise

@@ -13,3 +13,9 @@ def heydari_embedding(text: str):
     model = get_model()
     embedding = model.encode(text)
     return embedding
+
+def heydari_embedding_batch(texts: list):
+    """Batch encode multiple texts efficiently"""
+    model = get_model()
+    embeddings = model.encode(texts)
+    return embeddings

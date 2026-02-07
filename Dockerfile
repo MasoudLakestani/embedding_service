@@ -24,4 +24,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
 EXPOSE 8585
 
 # Run the application
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8585"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8585", "--workers", "6"]

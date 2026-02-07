@@ -13,3 +13,9 @@ def embed_intfloat(text: str):
     model = get_model()
     embedding = model.encode(text, normalize_embeddings=True)
     return embedding
+
+def embed_intfloat_batch(texts: list):
+    """Batch encode multiple texts efficiently"""
+    model = get_model()
+    embeddings = model.encode(texts, normalize_embeddings=True)
+    return embeddings
