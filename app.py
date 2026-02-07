@@ -8,8 +8,8 @@ from functions import (
     embed_intfloat,
     get_intfloat_model
 )
-from functions import heydari_embedding as heydari_module
-from functions import infloat_embedding as intfloat_module
+import functions.heydari_embedding as heydari_module
+import functions.infloat_embedding as intfloat_module
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
