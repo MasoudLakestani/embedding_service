@@ -1,5 +1,6 @@
 from .heydari_embedding import heydari_embedding, heydari_embedding_batch, get_model as get_heydari_model, _model as _heydari_model
 from .infloat_embedding import embed_intfloat, embed_intfloat_batch, get_model as get_intfloat_model, _model as _intfloat_model
+from .intfloat_base_embedding import embed_intfloat_base, embed_intfloat_base_batch, get_model as get_intfloat_base_model, _model as _intfloat_base_model
 
 __all__ = [
     "heydari_embedding",
@@ -9,5 +10,9 @@ __all__ = [
     "embed_intfloat",
     "embed_intfloat_batch",
     "get_intfloat_model",
-    "_intfloat_model"
+    "_intfloat_model",
+    "embed_intfloat_base",
+    "embed_intfloat_base_batch",
+    "get_intfloat_base_model",
+    "_intfloat_base_model"
 ]

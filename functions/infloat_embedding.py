@@ -1,4 +1,8 @@
+import os
 from sentence_transformers import SentenceTransformer
+
+os.environ['TRANSFORMERS_OFFLINE'] = '1'
+os.environ['HF_HUB_OFFLINE'] = '1'
 
 model_name = 'intfloat/multilingual-e5-small'
 _model = None
@@ -6,7 +10,7 @@ _model = None
 def get_model():
     global _model
     if _model is None:
-        _model = SentenceTransformer(model_name)
+        _model = SentenceTransformer(model_name, local_files_only=True)
     return _model
 
 def embed_intfloat(text: str):

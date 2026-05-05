@@ -9,10 +9,14 @@ from functions import (
     get_heydari_model,
     embed_intfloat,
     embed_intfloat_batch,
-    get_intfloat_model
+    get_intfloat_model,
+    embed_intfloat_base,
+    embed_intfloat_base_batch,
+    get_intfloat_base_model
 )
 import functions.heydari_embedding as heydari_module
 import functions.infloat_embedding as intfloat_module
+import functions.intfloat_base_embedding as intfloat_base_module
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -26,7 +30,8 @@ app = FastAPI(
 # Supported models mapping
 SUPPORTED_MODELS = {
     "heydari": "heydariAI/persian-embeddings",
-    "intfloat-small": "intfloat/multilingual-e5-small"
+    "intfloat-small": "intfloat/multilingual-e5-small",
+    "intfloat-base": "intfloat/multilingual-e5-base"
 }
 
 @app.on_event("startup")
@@ -37,6 +42,8 @@ async def load_models():
     get_heydari_model()
     logger.info("Loading intfloat/multilingual-e5-small")
     get_intfloat_model()
+    logger.info("Loading intfloat/multilingual-e5-base")
+    get_intfloat_base_model()
     logger.info("All models loaded successfully")
 
 @app.get("/")
@@ -46,8 +53,8 @@ async def root():
         "message": "Text Embedding Service API",
         "supported_models": list(SUPPORTED_MODELS.keys()),
         "endpoints": {
-            "/embed": "POST - Embed single text (requires 'model' header: heydari or intfloat-small)",
-            "/embed/batch": "POST - Embed multiple texts (requires 'model' header: heydari or intfloat-small)",
+            "/embed": f"POST - Embed single text (requires 'model' header: {', '.join(SUPPORTED_MODELS.keys())})",
+            "/embed/batch": f"POST - Embed multiple texts (requires 'model' header: {', '.join(SUPPORTED_MODELS.keys())})",
             "/health": "GET - Health check"
         }
     }
@@ -57,7 +64,8 @@ async def health_check():
     """Health check endpoint"""
     models_status = {
         "heydari": heydari_module._model is not None,
-        "intfloat-small": intfloat_module._model is not None
+        "intfloat-small": intfloat_module._model is not None,
+        "intfloat-base": intfloat_base_module._model is not None
     }
 
     if not all(models_status.values()):
@@ -76,7 +84,7 @@ async def embed_text(request: EmbedRequest, model: Optional[str] = Header(None))
 
     Args:
         request: EmbedRequest containing the text to embed
-        model: Model selection header (heydari or intfloat-small)
+        model: Model selection header (heydari, intfloat-small, or intfloat-base)
 
     Returns:
         EmbedResponse with the embedding vector
@@ -100,6 +108,8 @@ async def embed_text(request: EmbedRequest, model: Optional[str] = Header(None))
             embedding = await asyncio.to_thread(heydari_embedding, request.text)
         elif model == "intfloat-small":
             embedding = await asyncio.to_thread(embed_intfloat, request.text)
+        elif model == "intfloat-base":
+            embedding = await asyncio.to_thread(embed_intfloat_base, request.text)
 
         return EmbedResponse(embedding=embedding.tolist())
 
@@ -116,7 +126,7 @@ async def embed_batch(request: EmbedBatchRequest, model: Optional[str] = Header(
 
     Args:
         request: EmbedBatchRequest containing list of texts to embed
-        model: Model selection header (heydari or intfloat-small)
+        model: Model selection header (heydari, intfloat-small, or intfloat-base)
 
     Returns:
         EmbedBatchResponse with list of embedding vectors
@@ -140,6 +150,8 @@ async def embed_batch(request: EmbedBatchRequest, model: Optional[str] = Header(
             embeddings = await asyncio.to_thread(heydari_embedding_batch, request.texts)
         elif model == "intfloat-small":
             embeddings = await asyncio.to_thread(embed_intfloat_batch, request.texts)
+        elif model == "intfloat-base":
+            embeddings = await asyncio.to_thread(embed_intfloat_base_batch, request.texts)
 
         return EmbedBatchResponse(embeddings=embeddings.tolist())
 

@@ -1,10 +1,10 @@
-import os 
+import os
 from sentence_transformers import SentenceTransformer
 
 os.environ['TRANSFORMERS_OFFLINE'] = '1'
 os.environ['HF_HUB_OFFLINE'] = '1'
 
-model_name = 'heydariAI/persian-embeddings'
+model_name = 'intfloat/multilingual-e5-base'
 _model = None
 
 def get_model():
@@ -13,13 +13,13 @@ def get_model():
         _model = SentenceTransformer(model_name, local_files_only=True)
     return _model
 
-def heydari_embedding(text: str):
+def embed_intfloat_base(text: str):
     model = get_model()
-    embedding = model.encode(text)
+    embedding = model.encode(text, normalize_embeddings=True)
     return embedding
 
-def heydari_embedding_batch(texts: list):
+def embed_intfloat_base_batch(texts: list):
     """Batch encode multiple texts efficiently"""
     model = get_model()
-    embeddings = model.encode(texts)
+    embeddings = model.encode(texts, normalize_embeddings=True)
     return embeddings
